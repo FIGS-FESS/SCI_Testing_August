@@ -80,7 +80,6 @@ void main(void)
    Uint16 CRC;
    Uint32 data;
    int err = 0;
-   int test;
 
 //
 // Step 1. Initialize System Control:
@@ -194,7 +193,7 @@ void main(void)
 
     	if( TXRDY_flag == 1 )
     	{
-    		 PieCtrlRegs.PIEIER9.bit.INTx2 = 1;   // PIE Group 9, INT2 - TX INT
+    		SciaRegs.SCICTL2.bit.TXINTENA = 1;	 // Enable TX Interrupt
     	}
 
 
@@ -210,7 +209,7 @@ void main(void)
 		   }else
 		   {
 			   TXRDY_flag = 1;
-			   PieCtrlRegs.PIEIER9.bit.INTx1 = 0;   // PIE Group 9, INT1 - RX INT
+			   SciaRegs.SCICTL2.bit.RXBKINTENA = 0;   // Disable RX Interrupt
 		   }
         }
 
@@ -286,11 +285,11 @@ interrupt void sciaTxFifoIsr(void)
 
 	TXRDY_flag = 0;
 
-	PieCtrlRegs.PIEIER9.bit.INTx1 = 1;   // PIE Group 9, INT1 - RX INT
+	SciaRegs.SCICTL2.bit.RXBKINTENA = 1;   // Enable RX Interrupt
 
     SciaRegs.SCIFFTX.bit.TXFFINTCLR=1;   // Clear SCI Interrupt flag
- //   SciaRegs.SCICTL2.bit.TXINTENA = 0;	 // Disable TX Interrupt
-    PieCtrlRegs.PIEIER9.bit.INTx2 = 0;   // PIE Group 9, INT2
+    SciaRegs.SCICTL2.bit.TXINTENA = 0;	 // Disable TX Interrupt
+ //   PieCtrlRegs.PIEIER9.bit.INTx2 = 0;   // PIE Group 9, INT2
     PieCtrlRegs.PIEACK.all|=0x100;       // Issue PIE ACK
 }
 
